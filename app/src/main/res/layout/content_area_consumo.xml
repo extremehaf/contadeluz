@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="scan.lucas.com.contadeluz.AreaConsumoActivity"
+    tools:showIn="@layout/activity_area_consumo">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="35dp"
+        android:paddingRight="35dp"
+        android:textAlignment="center">
+
+
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/Kwh"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/txtKwh"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Kwh"
+                android:inputType="numberDecimal" />
+
+
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/Pis"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/Kwh">
+
+            <EditText
+                android:id="@+id/txtPis"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Pis"
+                android:inputType="numberDecimal" />
+
+
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/Cofis"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/Pis">
+
+            <EditText
+                android:id="@+id/txtCofis"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Cofis"
+                android:inputType="numberDecimal" />
+
+
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/Icms"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/Cofis">
+
+            <EditText
+                android:id="@+id/txtIcms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Icms"
+                android:inputType="numberDecimal" />
+
+
+        </android.support.design.widget.TextInputLayout>
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/Icms"
+            android:layout_below="@+id/Kwh">
+
+        </Spinner>
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>

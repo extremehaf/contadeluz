@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="6dp">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cvSingleUser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <ImageView
+                android:id="@+id/imgAparelho"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginRight="16dp" />
+
+            <TextView
+                android:id="@+id/nome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_toRightOf="@id/imgAparelho"
+                />
+
+            <TextView
+                android:id="@+id/voltagem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/kwh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/nome"
+                android:layout_toRightOf="@id/imgAparelho"
+                />
+
+            <TextView
+                android:id="@+id/potencia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/kwh"
+                android:layout_toRightOf="@id/imgAparelho"
+                />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</RelativeLayout>
