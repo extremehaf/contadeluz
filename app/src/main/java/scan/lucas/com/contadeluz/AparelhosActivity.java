@@ -1,5 +1,6 @@
 package scan.lucas.com.contadeluz;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import scan.lucas.com.contadeluz.Adapters.AllAparelhosAdapter;
+import scan.lucas.com.contadeluz.Adapters.AllAreasAdapter;
 import scan.lucas.com.contadeluz.DTO.Recurso;
 
 public class AparelhosActivity extends AppCompatActivity {
@@ -37,6 +39,19 @@ public class AparelhosActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         AllAparelhosAdapter allAparelhosAdapter = new AllAparelhosAdapter(getRecursoInformation(), this);
         recyclerView.setAdapter(allAparelhosAdapter);
+
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(this, recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        Intent EditarProduto = new Intent(view.getContext(), AparelhoActivity.class);
+                        startActivity(EditarProduto);
+                    }
+
+                    @Override public void onLongItemClick(View view, int position) {
+                        // do whatever
+                    }
+                })
+        );
     }
 
     private List<Recurso> getRecursoInformation() {

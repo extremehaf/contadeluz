@@ -10,7 +10,7 @@
             android:title="Aparelhos" />
         <item
             android:id="@+id/nav_areas"
-
+            android:icon="@mipmap/ic_queue_black_24dp"
             android:title="Areas Consumo" />
         <item
             android:id="@+id/nav_camera"

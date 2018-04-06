@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="scan.lucas.com.contadeluz">
-
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -30,6 +32,10 @@
         <activity
             android:name=".AreasActivity"
             android:label="@string/title_activity_areas"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AparelhoActivity"
+            android:label="@string/title_activity_aparelho"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

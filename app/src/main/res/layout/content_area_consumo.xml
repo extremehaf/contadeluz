@@ -85,6 +85,12 @@
             android:layout_below="@+id/Kwh">
 
         </Spinner>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvAparelhos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/spinner"/>
     </RelativeLayout>
+
 
 </android.support.constraint.ConstraintLayout>
