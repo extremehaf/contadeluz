@@ -1,6 +1,18 @@
 package scan.lucas.com.contadeluz
 
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.nav_header_main.lblEmail
+import kotlinx.android.synthetic.main.nav_header_main.lblNome
+import kotlinx.android.synthetic.main.nav_header_main.*
+
+import android.Manifest
+import android.annotation.TargetApi
+import android.app.Application
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
@@ -9,10 +21,26 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.app_bar_main.*
+
+import android.support.annotation.RequiresApi
+import android.support.v7.app.AlertDialog
+import android.system.Os.bind
+import android.widget.TextView
+
+import scan.lucas.com.contadeluz.DTO.Usuario
+import scan.lucas.com.contadeluz.Helpers.PreferenceHelper.defaultPrefs
+import scan.lucas.com.contadeluz.Helpers.PreferenceHelper.get
+import scan.lucas.com.contadeluz.Helpers.PreferenceHelper.set
+import com.google.gson.Gson
+import kotlinx.android.synthetic.main.nav_header_main.view.*
+import scan.lucas.com.contadeluz.Helpers.PreferenceHelper
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+    final val permissoes: kotlin.Array<String> = arrayOf(Manifest.permission.INTERNET,
+            Manifest.permission.ACCESS_NETWORK_STATE,
+            Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +58,60 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+
+        obterPermissao(this, permissoes)
+        val gson = Gson()
+        val prefs = PreferenceHelper.defaultPrefs(this)
+        val json: String? = prefs["USUARIO"] //getter  prefs["USUARIO"]
+        val user = gson.fromJson(json, Usuario::class.java)
+
+        val headerView = nav_view.getHeaderView(0)
+        headerView.lblNome!!.setText(user.nome)
+        headerView.lblEmail!!.setText(user.email)
+    }
+
+    fun obterPermissao(context: Context, permissions: kotlin.Array<String>) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (permissoesAtivas()) {
+//                    permissions granted, continue flow normally
+            } else {
+                requestMultiplePermissions();
+            }
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private fun permissoesAtivas(): Boolean {
+        for (permission in permissoes) {
+            if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED)
+                return false
+        }
+        return true
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private fun requestMultiplePermissions() {
+        val remainingPermissions = permissoes.filter { checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED }
+        requestPermissions(remainingPermissions.toTypedArray(), 101)
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: kotlin.Array<String>,
+                                            grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 101) {
+            if (grantResults.any { it != PackageManager.PERMISSION_GRANTED }) {
+                if (permissions.any { shouldShowRequestPermissionRationale(it) }) {
+                    AlertDialog.Builder(this)
+                            .setMessage("É necessario as permissoes")
+                            .setPositiveButton("Permitir") { dialog, which -> requestMultiplePermissions() }
+                            .setNegativeButton("Cancelar") { dialog, which -> dialog.dismiss() }
+                            .create()
+                            .show()
+                }
+            }
+            //all is good, continue flow
+        }
     }
 
     override fun onBackPressed() {

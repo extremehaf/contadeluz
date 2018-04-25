@@ -54,16 +54,22 @@
             android:inputType="number" />
 
     </android.support.design.widget.TextInputLayout>
-
+    <Spinner
+        android:id="@+id/ddlVoltagem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/pot"/>
     <Button
         android:id="@+id/btnSalvar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/pot"
+        app:layout_constraintTop_toBottomOf="@id/ddlVoltagem"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         android:text="Salvar" />
 
-    </android.support.constraint.ConstraintLayout>
+
+
+</android.support.constraint.ConstraintLayout>

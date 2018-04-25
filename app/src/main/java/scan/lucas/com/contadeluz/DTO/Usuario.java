@@ -1,20 +1,26 @@
 package scan.lucas.com.contadeluz.DTO;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by lucas on 05/04/2018.
  */
 
-public class Usuario {
+public class Usuario  implements Serializable {
     private int id;
     private String nome;
     private String email;
     private String senha;
     private String endereco;
     private Date dataNascimento;
-
+    private List<Recurso> recursos;
+    private List<PerfilConsumo> perfilConsumos;
     public Usuario() {
+        this.recursos = new ArrayList<>();
+        this.perfilConsumos = new ArrayList<>();
     }
 
     public Usuario(int id, String nome, String email, String senha, String endereco, Date dataNascimento) {
@@ -24,6 +30,9 @@ public class Usuario {
         this.senha = senha;
         this.endereco = endereco;
         this.dataNascimento = dataNascimento;
+        this.recursos = new ArrayList<>();
+        this.perfilConsumos = new ArrayList<>();
+
     }
 
     public int getId() {
@@ -72,5 +81,21 @@ public class Usuario {
 
     public void setDataNascimento(Date dataNascimento) {
         this.dataNascimento = dataNascimento;
+    }
+
+    public List<Recurso> getRecursos() {
+        return recursos;
+    }
+
+    public void setRecursos(List<Recurso> recursos) {
+        this.recursos = recursos;
+    }
+
+    public List<PerfilConsumo> getPerfilConsumos() {
+        return perfilConsumos;
+    }
+
+    public void setPerfilConsumos(ArrayList<PerfilConsumo> perfilConsumos) {
+        this.perfilConsumos = perfilConsumos;
     }
 }

@@ -1,5 +1,7 @@
 package scan.lucas.com.contadeluz.DTO;
 
+import android.app.ActivityManager;
+
 /**
  * Created by lucas on 05/04/2018.
  */
@@ -9,23 +11,28 @@ public class ItemPerfil {
     private int recursoId;
     private int perfilId;
     private int quantidade;
-    private int dias_uso;
-    private int tempo_uso;
+    private int diasUso;
+    private double tempo_uso;
+    private Recurso recurso;
+    private PerfilConsumo perfilConsumo;
 
     public int getId() {
         return id;
     }
 
     public ItemPerfil() {
+
     }
 
-    public ItemPerfil(int id, int recursoId, int perfilId, int quantidade, int dias_uso, int tempo_uso) {
+    public ItemPerfil(int id, int recursoId, int perfilId, int quantidade, int diasUso, double tempo_uso) {
         this.id = id;
         this.recursoId = recursoId;
         this.perfilId = perfilId;
         this.quantidade = quantidade;
-        this.dias_uso = dias_uso;
+        this.diasUso = diasUso;
         this.tempo_uso = tempo_uso;
+        this.recurso = null;
+        this.perfilConsumo = null;
     }
 
     public void setId(int id) {
@@ -56,19 +63,35 @@ public class ItemPerfil {
         this.quantidade = quantidade;
     }
 
-    public int getDias_uso() {
-        return dias_uso;
+    public int getDiasUso() {
+        return diasUso;
     }
 
-    public void setDias_uso(int dias_uso) {
-        this.dias_uso = dias_uso;
+    public void setDiasUso(int diasUso) {
+        this.diasUso = diasUso;
     }
 
-    public int getTempo_uso() {
+    public double getTempo_uso() {
         return tempo_uso;
     }
 
-    public void setTempo_uso(int tempo_uso) {
+    public void setTempo_uso(double tempo_uso) {
         this.tempo_uso = tempo_uso;
+    }
+
+    public Recurso getRecurso() {
+        return recurso;
+    }
+
+    public void setRecurso(Recurso recurso) {
+        this.recurso = recurso;
+    }
+
+    public PerfilConsumo getPerfilConsumo() {
+        return perfilConsumo;
+    }
+
+    public void setPerfilConsumo(PerfilConsumo perfilConsumo) {
+        this.perfilConsumo = perfilConsumo;
     }
 }

@@ -4,93 +4,176 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="scan.lucas.com.contadeluz.AreaConsumoActivity"
     tools:showIn="@layout/activity_area_consumo">
 
-    <RelativeLayout
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/teste"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/testetxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Kwh"
+            android:inputType="numberDecimal" />
+
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/descricao"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="35dp"
-        android:paddingRight="35dp"
-        android:textAlignment="center">
+        app:layout_constraintTop_toBottomOf="@id/teste">
 
-
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/Kwh"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/txtKwh"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Kwh"
-                android:inputType="numberDecimal" />
-
-
-        </android.support.design.widget.TextInputLayout>
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/Pis"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/Kwh">
-
-            <EditText
-                android:id="@+id/txtPis"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Pis"
-                android:inputType="numberDecimal" />
-
-
-        </android.support.design.widget.TextInputLayout>
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/Cofis"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/Pis">
-
-            <EditText
-                android:id="@+id/txtCofis"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Cofis"
-                android:inputType="numberDecimal" />
-
-
-        </android.support.design.widget.TextInputLayout>
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/Icms"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/Cofis">
-
-            <EditText
-                android:id="@+id/txtIcms"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Icms"
-                android:inputType="numberDecimal" />
-
-
-        </android.support.design.widget.TextInputLayout>
-
-        <Spinner
-            android:id="@+id/spinner"
+        <EditText
+            android:id="@+id/txtDescricao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/Icms"
-            android:layout_below="@+id/Kwh">
+            android:hint="Descricao"
+            android:inputType="text" />
 
-        </Spinner>
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rvAparelhos"
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/Kwh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/descricao">
+
+        <EditText
+            android:id="@+id/txtKwh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/spinner"/>
-    </RelativeLayout>
+            android:layout_height="wrap_content"
+            android:hint="Kwh"
+            android:inputType="numberDecimal"
+             />
+
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/Pis"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf=" @id/Kwh">
+
+        <EditText
+            android:id="@+id/txtPis"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Pis"
+            android:inputType="numberDecimal" />
+
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/Cofis"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/Pis">
+
+        <EditText
+            android:id="@+id/txtCofis"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Cofis"
+            android:inputType="numberDecimal" />
+
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/Icms"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/Cofis">
+
+        <EditText
+            android:id="@+id/txtIcms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Icms"
+            android:inputType="numberDecimal" />
+
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/adicional"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/Icms">
+
+        <EditText
+            android:id="@+id/txtAdicional"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Adicional de bandeira"
+            android:inputType="numberDecimal" />
+
+
+    </android.support.design.widget.TextInputLayout>
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/adicional">
+
+    </Spinner>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvAparelhos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/spinner">
+
+
+    </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/cDiario"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Consumo diario: "
+        app:layout_constraintTop_toBottomOf="@id/rvAparelhos" />
+
+    <TextView
+        android:id="@+id/cMensal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Consumo Mensal: "
+        app:layout_constraintTop_toBottomOf="@id/cDiario" />
+
+    <TextView
+        android:id="@+id/valorEstmado"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Valor a Pagar: "
+        app:layout_constraintTop_toBottomOf="@id/cMensal" />
+    <Button
+        android:id="@+id/btnAtualizar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btnAtualizar"
+        app:layout_constraintEnd_toStartOf="@id/btnSalvar"
+        app:layout_constraintTop_toBottomOf="@id/valorEstmado" />
+    <Button
+        android:id="@+id/btnSalvar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button"
+        app:layout_constraintTop_toBottomOf="@id/btnAtualizar" />
+
+
 
 
 </android.support.constraint.ConstraintLayout>

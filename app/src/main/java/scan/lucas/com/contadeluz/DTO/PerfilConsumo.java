@@ -9,23 +9,28 @@ import java.util.List;
 
 public class PerfilConsumo {
     private int id;
+    private String descricao;
     private int usuarioId;
     private String tipo;
     private double icms;
     private double pis;
     private double cofins;
+    private double adicional;
     private double kwh;
     private double consumoDiario;
     private double consumoMensal;
     private double valorEstimado;
     private List<ItemPerfil> itemPerfils;
+    private Usuario usuario;
 
     public PerfilConsumo() {
         this.itemPerfils = new ArrayList<>();
+        this.usuario = null;
     }
 
-    public PerfilConsumo(int id, int usuarioId, String tipo, double icms, double pis, double cofins, double kwh, double consumoDiario, double consumoMensal, double valorEstimado, List<ItemPerfil> itemPerfils) {
+    public PerfilConsumo(int id, String descricao,int usuarioId, String tipo, double icms, double pis, double cofins, double kwh, double consumoDiario, double consumoMensal, double valorEstimado, List<ItemPerfil> itemPerfils) {
         this.id = id;
+        this.descricao = descricao;
         this.usuarioId = usuarioId;
         this.tipo = tipo;
         this.icms = icms;
@@ -36,6 +41,7 @@ public class PerfilConsumo {
         this.consumoMensal = consumoMensal;
         this.valorEstimado = valorEstimado;
         this.itemPerfils = itemPerfils;
+        this.usuario = null;
     }
 
 
@@ -126,5 +132,29 @@ public class PerfilConsumo {
 
     public void setItemPerfils(List<ItemPerfil> itemPerfils) {
         this.itemPerfils = itemPerfils;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public double getAdicional() {
+        return adicional;
+    }
+
+    public void setAdicional(double adicional) {
+        this.adicional = adicional;
     }
 }

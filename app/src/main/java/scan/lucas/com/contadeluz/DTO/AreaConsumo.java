@@ -21,23 +21,24 @@ public class AreaConsumo {
     private double valorEstimado;
     private List<Recurso> recursos;
 
-    public AreaConsumo(){
+    public AreaConsumo() {
 
     }
-    public AreaConsumo(int id, int usuario_id, String nome,String tipo, double icms, double pis, double cofis, double kwh, double consumoDiario, double consumoMensal, double consumoAnual, double valorEstimado, List<Recurso> recursos ){
-        this.id            = id;
-        this.usuario_id    = usuario_id;
-        this.nome          = nome;
-        this.tipo          = tipo;
+
+    public AreaConsumo(int id, int usuario_id, String nome, String tipo, double icms, double pis, double cofis, double kwh, double consumoDiario, double consumoMensal, double consumoAnual, double valorEstimado, List<Recurso> recursos) {
+        this.id = id;
+        this.usuario_id = usuario_id;
+        this.nome = nome;
+        this.tipo = tipo;
         this.icms = icms;
-        this.pis           = pis;
-        this.cofis         = cofis;
-        this.kwh           = kwh;
+        this.pis = pis;
+        this.cofis = cofis;
+        this.kwh = kwh;
         this.consumoDiario = consumoDiario;
         this.consumoMensal = consumoMensal;
-        this.consumoAnual  = consumoAnual;
-        this.valorEstimado =  valorEstimado;
-        this.recursos		= recursos;	
+        this.consumoAnual = consumoAnual;
+        this.valorEstimado = valorEstimado;
+        this.recursos = recursos;
     }
 
     public int getId() {
