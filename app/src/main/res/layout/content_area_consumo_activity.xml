@@ -9,7 +9,6 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="scan.lucas.com.contadeluz.AreaConsumoActivity"
     tools:showIn="@layout/activity_area_consumo">
-
     <android.support.design.widget.TextInputLayout
         android:id="@+id/teste"
         android:layout_width="match_parent"
@@ -53,7 +52,7 @@
             android:layout_height="wrap_content"
             android:hint="Kwh"
             android:inputType="numberDecimal"
-             />
+            android:text="0.75616754" />
 
 
     </android.support.design.widget.TextInputLayout>
@@ -84,7 +83,7 @@
             android:id="@+id/txtCofis"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Cofis"
+            android:hint="Cofins"
             android:inputType="numberDecimal" />
 
 
@@ -106,22 +105,13 @@
 
     </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <Spinner
         android:id="@+id/adicional"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/Icms">
 
-        <EditText
-            android:id="@+id/txtAdicional"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Adicional de bandeira"
-            android:inputType="numberDecimal" />
-
-
-    </android.support.design.widget.TextInputLayout>
-
+    </Spinner>
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="match_parent"

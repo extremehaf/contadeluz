@@ -6,8 +6,13 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
@@ -23,35 +28,17 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
-        <activity
-            android:name=".AparelhosActivity"
-            android:label="@string/title_activity_aparelhos"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".AreaConsumoActivity"
-            android:label="@string/title_activity_area_consumo"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".AreasActivity"
-            android:label="@string/title_activity_areas"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".AparelhoActivity"
-            android:label="@string/title_activity_aparelho"
-            android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login">
-            <intent-filter>
+            android:label="@string/title_activity_login"
+            android:noHistory="true">
+            <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <provider
             android:name=".GenericFileProvider"
             android:authorities="${applicationId}.my.package.name.provider"
@@ -59,8 +46,62 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
+
+        <activity
+            android:name=".UsuarioActivity"
+            android:label="@string/title_activity_usuario"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="scan.lucas.com.contadeluz.MainActivity" />
+        </activity>
+        <activity
+            android:name=".AparelhosActivity"
+            android:label="@string/title_activity_aparelhos"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="scan.lucas.com.contadeluz.MainActivity" />
+        </activity>
+        <activity
+            android:name=".AreasActivity"
+            android:label="@string/title_activity_areas"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="scan.lucas.com.contadeluz.MainActivity" />
+        </activity>
+        <activity
+            android:name=".AreaConsumoActivity"
+            android:label="@string/title_activity_area_consumo"
+            android:parentActivityName=".AreasActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="scan.lucas.com.contadeluz.AreasActivity" />
+        </activity>
+        <activity
+            android:name=".AparelhoActivity"
+            android:label="@string/title_activity_aparelho"
+            android:parentActivityName=".AparelhosActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="scan.lucas.com.contadeluz.AparelhosActivity" />
+        </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="scan.lucas.com.contadeluz.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

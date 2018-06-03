@@ -5,9 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,18 +23,15 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import scan.lucas.com.contadeluz.Adapters.AllAparelhosAdapter;
 import scan.lucas.com.contadeluz.Adapters.AllItemPerfilAdapter;
+import scan.lucas.com.contadeluz.Adapters.SpinnerAdapter;
 import scan.lucas.com.contadeluz.Adapters.SpinnerProdutosAdapter;
-import scan.lucas.com.contadeluz.DTO.AreaConsumo;
+import scan.lucas.com.contadeluz.DTO.ItemData;
 import scan.lucas.com.contadeluz.DTO.ItemPerfil;
 import scan.lucas.com.contadeluz.DTO.PerfilConsumo;
 import scan.lucas.com.contadeluz.DTO.Recurso;
@@ -48,7 +42,8 @@ import scan.lucas.com.contadeluz.REST.Controller;
 import scan.lucas.com.contadeluz.ViewModel.ItemConsumo;
 
 public class AreaConsumoActivity extends AppCompatActivity {
-
+    RecyclerView mRecyclerView;
+    AllItemPerfilAdapter allItemPerfilAdapter;
     private List<Recurso> mRecursos;
     private List<ItemConsumo> itens = new ArrayList<>();
     private int perfilId = 1;
@@ -56,20 +51,17 @@ public class AreaConsumoActivity extends AppCompatActivity {
     private Usuario mUser;
     private PerfilConsumo perfilConsumo;
     private ApiClient controllerApi;
-
     private EditText txtKwh;
     private EditText txtPis;
     private EditText txtCofins;
     private EditText txtIcms;
-    private EditText txtAdicional;
+    private Spinner adicional;
+    private double adicionalVal = 0.0;
     private EditText txtDescricao;
-
     private TextView cDiario;
     private TextView cMensal;
     private TextView valorEstmado;
     private Spinner tipo;
-    RecyclerView mRecyclerView;
-    AllItemPerfilAdapter allItemPerfilAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +70,7 @@ public class AreaConsumoActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Button btnSalvar = (Button ) findViewById(R.id.btnSalvar);
+        Button btnSalvar = (Button) findViewById(R.id.btnSalvar);
         btnSalvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,7 +78,7 @@ public class AreaConsumoActivity extends AppCompatActivity {
             }
         });
 
-        Button btnAtualizar = (Button ) findViewById(R.id.btnAtualizar);
+        Button btnAtualizar = (Button) findViewById(R.id.btnAtualizar);
         btnAtualizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,7 +100,7 @@ public class AreaConsumoActivity extends AppCompatActivity {
         txtPis = (EditText) findViewById(R.id.txtPis);
         txtCofins = (EditText) findViewById(R.id.txtCofis);
         txtIcms = (EditText) findViewById(R.id.txtIcms);
-        txtAdicional = (EditText) findViewById(R.id.txtAdicional);
+        adicional = (Spinner) findViewById(R.id.adicional);
         cDiario = (TextView) findViewById(R.id.cDiario);
         cMensal = (TextView) findViewById(R.id.cMensal);
         valorEstmado = (TextView) findViewById(R.id.valorEstmado);
@@ -116,11 +108,18 @@ public class AreaConsumoActivity extends AppCompatActivity {
         List<String> list = new ArrayList<String>();
         list.add("Urbano");
         list.add("Rural");
-
         ArrayAdapter<String> adp1 = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, list);
         adp1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         tipo.setAdapter(adp1);
+
+        ArrayList<ItemData> listBaneiras = new ArrayList<>();
+        listBaneiras.add(new ItemData("Verde", R.mipmap.ic_flag_green256_25053));
+        listBaneiras.add(new ItemData("Vermelha", R.mipmap.ic_flag_red256_25052));
+        listBaneiras.add(new ItemData("Amarela", R.mipmap.ic_flag_yellow256_25051));
+
+        SpinnerAdapter adapter = new SpinnerAdapter(this, R.layout.row_spinner_produto, R.id.produto, listBaneiras);
+        adicional.setAdapter(adapter);
 
         Gson gson = new Gson();
         SharedPreferences preferences = PreferenceHelper.INSTANCE.defaultPrefs(this);
@@ -131,7 +130,7 @@ public class AreaConsumoActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         //layoutManager.setAutoMeasureEnabled(true);
         mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setNestedScrollingEnabled(false);
+        mRecyclerView.setNestedScrollingEnabled(true);
 
         Intent intent = getIntent();
         carregaRecursos();
@@ -141,8 +140,7 @@ public class AreaConsumoActivity extends AppCompatActivity {
         else {
             cadastrarArea();
         }
-
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void AddAparelho() {
@@ -203,10 +201,22 @@ public class AreaConsumoActivity extends AppCompatActivity {
                     txtPis.setText(String.valueOf(perfilConsumo.getPis()));
                     txtCofins.setText(String.valueOf(perfilConsumo.getCofins()));
                     txtIcms.setText(String.valueOf(perfilConsumo.getIcms()));
-                    txtAdicional.setText(String.valueOf(perfilConsumo.getAdicional()));
-                    cDiario.setText("Consumo diario: " + String.valueOf(perfilConsumo.getConsumoDiario()));
-                    cMensal.setText("Consumo Mensal: " + String.valueOf(perfilConsumo.getConsumoMensal()));
-                    valorEstmado.setText("Valor estimado: " + String.valueOf(perfilConsumo.getValorEstimado()));
+
+                    switch (String.valueOf(perfilConsumo.getAdicional())) {
+                        case "0":
+                            adicional.setSelection(1);
+                            break;
+                        case "1":
+                            adicional.setSelection(2);
+                            break;
+                        case "3":
+                            adicional.setSelection(3);
+                            break;
+
+                    }
+                    cDiario.setText(String.format("Consumo diario: %.2f", perfilConsumo.getConsumoDiario()) + " kw");
+                    cMensal.setText(String.format("Consumo Mensal: %.2f", perfilConsumo.getConsumoMensal()) + " kw");
+                    valorEstmado.setText(String.format("Valor estimado: R$ %.2f", perfilConsumo.getValorEstimado()));
                     allItemPerfilAdapter = new AllItemPerfilAdapter(perfilConsumo.getItemPerfils(), AreaConsumoActivity.this);
                     mRecyclerView.setAdapter(allItemPerfilAdapter);
                 }
@@ -343,7 +353,7 @@ public class AreaConsumoActivity extends AppCompatActivity {
 
     private void carregaRecursos() {
         controllerApi = Controller.createService(ApiClient.class);
-        retrofit2.Call<List<Recurso>> request = controllerApi.RecursosUsuario(mUser.getId());
+        retrofit2.Call<List<Recurso>> request = controllerApi.RecursosUsuarioSimples(mUser.getId());
         request.enqueue(new Callback<List<Recurso>>() {
             @Override
             public void onResponse(Call<List<Recurso>> call, Response<List<Recurso>> response) {
@@ -370,7 +380,20 @@ public class AreaConsumoActivity extends AppCompatActivity {
         perfilConsumo.setPis(Double.valueOf(txtPis.getText().toString()));
         perfilConsumo.setCofins(Double.valueOf(txtCofins.getText().toString()));
         perfilConsumo.setIcms(Double.valueOf(txtIcms.getText().toString()));
-        perfilConsumo.setAdicional(Double.valueOf(txtAdicional.getText().toString()));
+
+        switch (adicional.getSelectedItem().toString()) {
+            case "Vermelha":
+                this.adicionalVal = 3;
+                break;
+            case "Amarela":
+                this.adicionalVal = 1;
+                break;
+            case "Verde":
+                this.adicionalVal = 0;
+                break;
+
+        }
+        perfilConsumo.setAdicional(adicionalVal);
         perfilConsumo.setTipo(tipo.getSelectedItem().toString());
         perfilConsumo.setItemPerfils(null);
         perfilConsumo.setUsuario(null);
@@ -382,9 +405,8 @@ public class AreaConsumoActivity extends AppCompatActivity {
 
                 if (response != null && response.isSuccessful() && response.body() != null) {
                     Toast.makeText(AreaConsumoActivity.this, "Atualizado", Toast.LENGTH_LONG);
-                }
-                else
-                    Toast.makeText(AreaConsumoActivity.this, "Erro ao buscar os dados" , Toast.LENGTH_LONG);
+                } else
+                    Toast.makeText(AreaConsumoActivity.this, "Erro ao buscar os dados", Toast.LENGTH_LONG);
                 showProgress(false);
             }
 
@@ -409,12 +431,12 @@ public class AreaConsumoActivity extends AppCompatActivity {
 
                 if (response != null && response.isSuccessful() && response.body() != null) {
                     perfilConsumo = response.body();
-                    cDiario.setText("Consumo diario: " + String.valueOf(perfilConsumo.getConsumoDiario()));
-                    cMensal.setText("Consumo Mensal: " + String.valueOf(perfilConsumo.getConsumoMensal()));
-                    valorEstmado.setText("Valor estimado: " + String.valueOf(perfilConsumo.getValorEstimado()));
-                }
-                else
-                    Toast.makeText(AreaConsumoActivity.this, "Erro ao buscar os dados" , Toast.LENGTH_LONG);
+
+                    cDiario.setText(String.format("Consumo diario: %.2f", perfilConsumo.getConsumoDiario()) + " kw");
+                    cMensal.setText(String.format("Consumo Mensal:  %.2f", perfilConsumo.getConsumoMensal()) + " kw");
+                    valorEstmado.setText(String.format("Valor estimado: R$ %.2f", perfilConsumo.getValorEstimado()));
+                } else
+                    Toast.makeText(AreaConsumoActivity.this, "Erro ao buscar os dados", Toast.LENGTH_LONG);
                 showProgress(false);
             }
 
@@ -427,4 +449,5 @@ public class AreaConsumoActivity extends AppCompatActivity {
         });
 
     }
+
 }

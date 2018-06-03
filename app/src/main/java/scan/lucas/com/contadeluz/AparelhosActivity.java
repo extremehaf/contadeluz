@@ -3,18 +3,9 @@ package scan.lucas.com.contadeluz;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,15 +15,12 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import scan.lucas.com.contadeluz.Adapters.AllAparelhosAdapter;
-import scan.lucas.com.contadeluz.Adapters.AllAreasAdapter;
 import scan.lucas.com.contadeluz.DTO.Recurso;
 import scan.lucas.com.contadeluz.DTO.Usuario;
 import scan.lucas.com.contadeluz.Helpers.PreferenceHelper;
@@ -40,12 +28,12 @@ import scan.lucas.com.contadeluz.REST.ApiClient;
 import scan.lucas.com.contadeluz.REST.Controller;
 
 public class AparelhosActivity extends AppCompatActivity {
-
-    private Usuario mUser;
-    private RecyclerView mRecyclerView;
     ProgressDialog mDialog;
     AllAparelhosAdapter allAparelhosAdapter;
     Gson gson;
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    private Usuario mUser;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +48,7 @@ public class AparelhosActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent EditarProduto = new Intent(view.getContext(), AparelhoActivity.class);
                 EditarProduto.putExtra("recursoId", 0);
-                startActivity(EditarProduto);
+                startActivityForResult(EditarProduto, 2);
                 //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 //       .setAction("Action", null).show();
             }
@@ -69,25 +57,45 @@ public class AparelhosActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.rvAllAparelhos);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Refresh items
+                getRecursoInformation(mUser.getId(), false);
+            }
+        });
+
         gson = new Gson();
         SharedPreferences preferences = PreferenceHelper.INSTANCE.defaultPrefs(this);
         String json = preferences.getString("USUARIO", "");
         mUser = gson.fromJson(json, Usuario.class);
         if(getCallingActivity() == null)
-            getRecursoInformation(mUser.getId());
+            getRecursoInformation(mUser.getId(), true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void getRecursoInformation(int usuarioId) {
-        showProgress(true);
+    void onItemsLoadComplete() {
+        // Update the adapter and notify data set changed
+        // ...
+
+        // Stop refresh animation
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    private void getRecursoInformation(int usuarioId, boolean load) {
+        if (load)
+            showProgress(true);
 
         ApiClient controllerApi = Controller.createService(ApiClient.class);
         //vai na API com esse id e traz o cliente
 
-        retrofit2.Call<List<Recurso>> request = controllerApi.RecursosUsuario(usuarioId);
+        retrofit2.Call<List<Recurso>> request = controllerApi.RecursosUsuarioSimples(usuarioId);
         request.enqueue(new Callback<List<Recurso>>() {
             @Override
             public void onResponse(Call<List<Recurso>> call, Response<List<Recurso>> response) {
 
+                onItemsLoadComplete();
                 if (response != null && response.isSuccessful()) {
                     List<Recurso> recursos = (List<Recurso>) response.body();
 
@@ -95,11 +103,13 @@ public class AparelhosActivity extends AppCompatActivity {
                     mRecyclerView.setAdapter(allAparelhosAdapter);
                 }
                 showProgress(false);
+
             }
 
             @Override
             public void onFailure(Call<List<Recurso>> call, Throwable t) {
                 showProgress(false);
+                Toast.makeText(AparelhosActivity.this, t.getMessage().toString(), Toast.LENGTH_LONG);
             }
         });
 
@@ -115,17 +125,6 @@ public class AparelhosActivity extends AppCompatActivity {
             mDialog.dismiss();
     }
 
-    @Override
-    public void onResume(){
-        super.onResume();
-        //gson = new Gson();
-        //SharedPreferences preferences = PreferenceHelper.INSTANCE.defaultPrefs(this);
-        //String json = preferences.getString("USUARIO", "");
-        //mUser = gson.fromJson(json, Usuario.class);
-        //getRecursoInformation(mUser.getId());
-
-    }
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 2) {

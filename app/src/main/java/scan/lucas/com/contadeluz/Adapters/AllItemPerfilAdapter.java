@@ -3,7 +3,6 @@ package scan.lucas.com.contadeluz.Adapters;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +17,6 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import scan.lucas.com.contadeluz.AreaConsumoActivity;
 import scan.lucas.com.contadeluz.DTO.ItemPerfil;
 import scan.lucas.com.contadeluz.R;
 import scan.lucas.com.contadeluz.REST.ApiClient;
@@ -30,11 +28,11 @@ import scan.lucas.com.contadeluz.REST.Controller;
 
 public class AllItemPerfilAdapter extends RecyclerView.Adapter<AllItemPerfilAdapter.AparelhoViewHolder> {
 
+    ApiClient controllerApi;
     private List<ItemPerfil> itemPerfils;
     private Context context;
     private ProgressDialog mDialog;
     private int mPerfilId = 0;
-    ApiClient controllerApi;
 
     public AllItemPerfilAdapter(List<ItemPerfil> itemPerfils, Context context) {
         this.setItemPerfils(itemPerfils);
@@ -102,32 +100,6 @@ public class AllItemPerfilAdapter extends RecyclerView.Adapter<AllItemPerfilAdap
         this.itemPerfils = itemPerfils;
     }
 
-    public static class AparelhoViewHolder extends RecyclerView.ViewHolder {
-
-        TextView nome;
-        TextView potencia;
-        TextView dias;
-        TextView horas;
-
-        public AparelhoViewHolder(View itemView) {
-            super(itemView);
-            nome = (TextView) itemView.findViewById(R.id.nome);
-            potencia = (TextView) itemView.findViewById(R.id.potencia);
-            dias = (TextView) itemView.findViewById(R.id.dias);
-            horas = (TextView) itemView.findViewById(R.id.horas);
-
-
-            int[] presetSizes = new int[]{18, 100, 2};
-            int unit = TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM;
-            TextViewCompat.setAutoSizeTextTypeWithDefaults(nome, unit);
-            TextViewCompat.setAutoSizeTextTypeWithDefaults(potencia, unit);
-            TextViewCompat.setAutoSizeTextTypeWithDefaults(dias, unit);
-            TextViewCompat.setAutoSizeTextTypeWithDefaults(horas, unit);
-
-
-        }
-    }
-
     private void showProgress(Boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
@@ -173,6 +145,32 @@ public class AllItemPerfilAdapter extends RecyclerView.Adapter<AllItemPerfilAdap
         getItemPerfils().remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemPerfils().size());
+    }
+
+    public static class AparelhoViewHolder extends RecyclerView.ViewHolder {
+
+        TextView nome;
+        TextView potencia;
+        TextView dias;
+        TextView horas;
+
+        public AparelhoViewHolder(View itemView) {
+            super(itemView);
+            nome = (TextView) itemView.findViewById(R.id.nome);
+            potencia = (TextView) itemView.findViewById(R.id.potencia);
+            dias = (TextView) itemView.findViewById(R.id.dias);
+            horas = (TextView) itemView.findViewById(R.id.horas);
+
+
+            int[] presetSizes = new int[]{18, 100, 2};
+            int unit = TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM;
+            TextViewCompat.setAutoSizeTextTypeWithDefaults(nome, unit);
+            TextViewCompat.setAutoSizeTextTypeWithDefaults(potencia, unit);
+            TextViewCompat.setAutoSizeTextTypeWithDefaults(dias, unit);
+            TextViewCompat.setAutoSizeTextTypeWithDefaults(horas, unit);
+
+
+        }
     }
 
 }

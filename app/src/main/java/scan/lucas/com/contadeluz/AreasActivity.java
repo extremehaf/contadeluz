@@ -1,20 +1,17 @@
 package scan.lucas.com.contadeluz;
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -24,9 +21,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import scan.lucas.com.contadeluz.Adapters.AllAreasAdapter;
-import scan.lucas.com.contadeluz.DTO.AreaConsumo;
 import scan.lucas.com.contadeluz.DTO.PerfilConsumo;
-import scan.lucas.com.contadeluz.DTO.Recurso;
 import scan.lucas.com.contadeluz.DTO.Usuario;
 import scan.lucas.com.contadeluz.Helpers.PreferenceHelper;
 import scan.lucas.com.contadeluz.REST.ApiClient;
@@ -34,16 +29,17 @@ import scan.lucas.com.contadeluz.REST.Controller;
 
 public class AreasActivity extends AppCompatActivity {
 
+    RecyclerView mRecyclerView;
     private ProgressDialog mDialog;
     private Usuario mUser;
-    RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private Context mContext = AreasActivity.this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_areas);
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -75,8 +71,9 @@ public class AreasActivity extends AppCompatActivity {
 
         showProgress(true, "Aguarde....", "Carregando informações");
         getAreasInformation(mUser.getId());
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
     void onItemsLoadComplete() {
         // Update the adapter and notify data set changed
         // ...
@@ -99,7 +96,7 @@ public class AreasActivity extends AppCompatActivity {
                     if (response != null && response.isSuccessful()) {
                         List<PerfilConsumo> perfilConsumos = (List<PerfilConsumo>) response.body();
 
-                        AllAreasAdapter allAreasAdapter = new AllAreasAdapter(perfilConsumos, AreasActivity.this);
+                        AllAreasAdapter allAreasAdapter = new AllAreasAdapter(perfilConsumos, mContext);
                         mRecyclerView.setAdapter(allAreasAdapter);
                         onItemsLoadComplete();
                     }
@@ -137,4 +134,5 @@ public class AreasActivity extends AppCompatActivity {
         else
             mDialog.dismiss();
     }
+
 }

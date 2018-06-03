@@ -6,11 +6,14 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Configurações </string>
+
+    <string name="title_activity_usuario">Usuario</string>
     <string name="title_activity_aparelhos">Meus Aparelhos</string>
     <string name="title_activity_area_consumo">Perfil de Consumo</string>
     <string name="title_activity_areas">Perfis de Consumo</string>
     <string name="title_activity_aparelho">Aparelho</string>
-    <string name="title_activity_login">Conta de Luz </string>
+    <string name="title_activity_login">Login </string>
+    <string name="title_activity_settings">Configurações</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

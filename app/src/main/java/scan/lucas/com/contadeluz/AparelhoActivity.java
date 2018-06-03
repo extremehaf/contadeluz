@@ -10,20 +10,18 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -37,16 +35,12 @@ import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import scan.lucas.com.contadeluz.Adapters.AllAparelhosAdapter;
 import scan.lucas.com.contadeluz.DTO.ItemPerfil;
 import scan.lucas.com.contadeluz.DTO.Recurso;
 import scan.lucas.com.contadeluz.DTO.Usuario;
@@ -56,7 +50,17 @@ import scan.lucas.com.contadeluz.REST.Controller;
 
 public class AparelhoActivity extends AppCompatActivity {
 
+    protected static final int CAMERA_REQUEST = 0;
+    protected static final int GALLERY_PICTURE = 1;
     private static int RESULT_LOAD_IMG = 1;
+    ApiClient controllerApi;
+    Bitmap bitmap;
+    String selectedImagePath;
+    AlertDialog myAlertDialog;
+    Gson gson;
+    Integer posicao;
+    Context mContext;
+    SharedPreferences preferences;
     private ImageView headerFoto;
     private EditText txtNome;
     private EditText txtDescricao;
@@ -66,22 +70,13 @@ public class AparelhoActivity extends AppCompatActivity {
     private ProgressDialog mDialog;
     private Usuario mUser = new Usuario();
     private int recursoId = 0;
-    ApiClient controllerApi;
-    protected static final int CAMERA_REQUEST = 0;
-    protected static final int GALLERY_PICTURE = 1;
     private Intent pictureActionIntent = null;
-    Bitmap bitmap;
-    String selectedImagePath;
-    AlertDialog.Builder myAlertDialog;
-    Gson gson;
-    Integer posicao;
-    Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_aparelho);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
         mContext = this;
@@ -102,15 +97,20 @@ public class AparelhoActivity extends AppCompatActivity {
         ddlVoltagem.setAdapter(adp1);
 
         gson = new Gson();
-        SharedPreferences preferences = PreferenceHelper.INSTANCE.defaultPrefs(this);
+        preferences = PreferenceHelper.INSTANCE.defaultPrefs(this);
         String json = preferences.getString("USUARIO", "");
         mUser = gson.fromJson(json, Usuario.class);
-
+        String rjson = preferences.getString("aparelho", "");
+        Recurso mRecurso = gson.fromJson(rjson, Recurso.class);
         Intent intent = getIntent();
         recursoId = intent.getIntExtra("recursoId", -1);
         posicao = intent.getIntExtra("posicao", 0);
-        if (recursoId > 0)
+
+        if (recursoId > 0 && mRecurso != null)
+            preencherDados(mRecurso);
+        else if (recursoId > 0)
             obterDadosAparelho(recursoId);
+
         importFoto.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -119,37 +119,53 @@ public class AparelhoActivity extends AppCompatActivity {
             }
         });
 
-        btnSalvar.setOnClickListener(new SalvarDados());
+        btnSalvar.setOnClickListener(new AparelhoActivity.SalvarDados());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    private void preencherDados(Recurso recurso) {
+        txtNome.setText(recurso.getNome());
+        txtDescricao.setText(recurso.getDescricao());
+        txtPotencia.setText(String.valueOf(recurso.getPotencia()));
+        if (recurso.getVoltagem().contains("110"))
+            ddlVoltagem.setSelection(0);
+        else
+            ddlVoltagem.setSelection(1);
+
+        headerFoto.setImageBitmap(recurso.retornaFotoBmp());
+    }
     private void startDialog() {
-        myAlertDialog = new AlertDialog.Builder(AparelhoActivity.this);
+        myAlertDialog = new AlertDialog.Builder(this).setPositiveButton("Galeria",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                        AparelhoActivity.SampleClass sample = new AparelhoActivity.SampleClass(mContext);
+                        sample.openGalery();
+                    }
+                }).setNegativeButton("Camera",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                        AparelhoActivity.SampleClass sample = new AparelhoActivity.SampleClass(mContext);
+                        sample.openCamera();
+                    }
+                }).create();
         myAlertDialog.setTitle("Opções para o upload");
         myAlertDialog.setMessage("Escolha uma opção pra mandar a foto");
-        myAlertDialog.setPositiveButton("Galeria",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
 
-                        SampleClass sample = new SampleClass(mContext);
-                        sample.openGalery();
-
-
-                    }
-                });
-
-        myAlertDialog.setNegativeButton("Camera",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
-
-                        SampleClass sample = new SampleClass(mContext);
-                        sample.openCamera();
-
-
-                    }
-                });
         myAlertDialog.show();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
     private void obterDadosAparelho(final int recursoId) {
         showProgress(true);
         ApiClient controllerApi = Controller.createService(ApiClient.class);
@@ -187,74 +203,12 @@ public class AparelhoActivity extends AppCompatActivity {
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
         if (show)
-            mDialog = ProgressDialog.show(AparelhoActivity.this, "", "Carregando. Por favor Aguarde...", true);
+            mDialog = ProgressDialog.show(mContext, "", "Carregando. Por favor Aguarde...", true);
         else {
             if (mDialog != null)
                 mDialog.dismiss();
         }
 
-    }
-
-    private class SalvarDados implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-            showProgress(true);
-            controllerApi = Controller.createService(ApiClient.class);
-            //vai na API com esse id e traz o cliente
-            final Recurso rec = new Recurso();
-            rec.setId(recursoId);
-            rec.setDescricao(txtDescricao.getText().toString());
-            rec.setNome(txtNome.getText().toString());
-            String pot = txtPotencia.getText().toString();
-            rec.setPotencia(Integer.parseInt(pot));
-            rec.setVoltagem(ddlVoltagem.getSelectedItem().toString());
-            rec.setUsuarioId(mUser.getId());
-            rec.setItemPerfils(new ArrayList<ItemPerfil>());
-            rec.setUsuario(null);
-            headerFoto.buildDrawingCache();
-            Bitmap bmap = headerFoto.getDrawingCache();
-            if (bmap != null) {
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bmap.compress(Bitmap.CompressFormat.PNG, 40, stream);
-                byte[] image = stream.toByteArray();
-                rec.setFoto(Base64.encodeToString(image, 0));
-            }
-
-            retrofit2.Call<Integer> request;
-            if (recursoId > 0) {
-                request = controllerApi.PutRecurso(rec.getId(), rec);
-            } else {
-                request = controllerApi.PostRecurso(rec);
-            }
-            request.enqueue(new Callback<Integer>() {
-                @Override
-                public void onResponse(Call<Integer> call, Response<Integer> response) {
-
-
-                    if (response != null && response.isSuccessful()) {
-                        rec.setId(response.body());
-
-                        Intent intent = new Intent();
-
-                        SharedPreferences preferences = PreferenceHelper.INSTANCE.defaultPrefs(AparelhoActivity.this);
-                        preferences.edit().putString("aparelho", gson.toJson(rec, Recurso.class));
-                        intent.putExtra("posicao", posicao);
-                        setResult(RESULT_OK, intent);
-                        showProgress(false);
-                        finish();
-                    } else
-                        showProgress(false);
-
-                }
-
-                @Override
-                public void onFailure(Call<Integer> call, Throwable t) {
-                    showProgress(false);
-                    Toast.makeText(AparelhoActivity.this, "Erro ao salvar dados, tente novamnente", Toast.LENGTH_SHORT);
-                }
-            });
-        }
     }
 
     @Override
@@ -341,6 +295,72 @@ public class AparelhoActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Cancelado", Toast.LENGTH_SHORT).show();
             }
         }
+        myAlertDialog.dismiss();
+    }
+
+    private class SalvarDados implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            showProgress(true);
+            controllerApi = Controller.createService(ApiClient.class);
+            //vai na API com esse id e traz o cliente
+            final Recurso rec = new Recurso();
+            rec.setId(recursoId);
+            rec.setDescricao(txtDescricao.getText().toString());
+            rec.setNome(txtNome.getText().toString());
+            String pot = txtPotencia.getText().toString();
+            rec.setPotencia(Integer.parseInt(pot));
+            rec.setVoltagem(ddlVoltagem.getSelectedItem().toString().replace("v", ""));
+            rec.setUsuarioId(mUser.getId());
+            rec.setItemPerfils(new ArrayList<ItemPerfil>());
+            rec.setUsuario(null);
+            headerFoto.buildDrawingCache();
+            Bitmap bmap = headerFoto.getDrawingCache();
+            if (bmap != null) {
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bmap.compress(Bitmap.CompressFormat.JPEG, 35, stream);
+                byte[] image = stream.toByteArray();
+                System.gc();
+                rec.setFoto(Base64.encodeToString(image, Base64.DEFAULT));
+            }
+
+            retrofit2.Call<Integer> request;
+            if (recursoId > 0) {
+                request = controllerApi.PutRecurso(rec.getId(), rec);
+            } else {
+                request = controllerApi.PostRecurso(rec);
+            }
+            request.enqueue(new Callback<Integer>() {
+                @Override
+                public void onResponse(Call<Integer> call, Response<Integer> response) {
+
+
+                    if (response != null && response.isSuccessful()) {
+                        rec.setId(response.body());
+
+                        Intent intent = new Intent();
+
+                        preferences = PreferenceHelper.INSTANCE.defaultPrefs(mContext);
+                        preferences.edit()
+                                .putString("aparelho", gson.toJson(rec, Recurso.class))
+                                .apply();
+                        intent.putExtra("posicao", posicao);
+                        setResult(RESULT_OK, intent);
+                        showProgress(false);
+                        finish();
+                    } else
+                        showProgress(false);
+
+                }
+
+                @Override
+                public void onFailure(Call<Integer> call, Throwable t) {
+                    showProgress(false);
+                    Toast.makeText(mContext, "Erro ao salvar dados, tente novamnente", Toast.LENGTH_SHORT);
+                }
+            });
+        }
     }
 
     public class SampleClass extends Activity {
@@ -368,7 +388,7 @@ public class AparelhoActivity extends AppCompatActivity {
 
             File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp.jpg");
 
-            Uri photoURI = FileProvider.getUriForFile(AparelhoActivity.this, AparelhoActivity.this.getPackageName() + ".my.package.name.provider", f);
+            Uri photoURI = FileProvider.getUriForFile(mContext, AparelhoActivity.this.getPackageName() + ".my.package.name.provider", f);
 
             intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
 

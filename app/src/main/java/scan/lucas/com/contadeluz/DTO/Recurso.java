@@ -82,7 +82,6 @@ public class Recurso {
             Bitmap bmp = BitmapFactory.decodeByteArray(fotoByte, 0, fotoByte.length);
             return bmp;
         }
-
         return null;
 
     }

@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -23,7 +26,7 @@ import retrofit2.Response;
 import scan.lucas.com.contadeluz.AparelhoActivity;
 import scan.lucas.com.contadeluz.AparelhosActivity;
 import scan.lucas.com.contadeluz.DTO.Recurso;
-import scan.lucas.com.contadeluz.DTO.Usuario;
+import scan.lucas.com.contadeluz.Helpers.PreferenceHelper;
 import scan.lucas.com.contadeluz.R;
 import scan.lucas.com.contadeluz.REST.ApiClient;
 import scan.lucas.com.contadeluz.REST.Controller;
@@ -35,10 +38,10 @@ import scan.lucas.com.contadeluz.REST.Controller;
 public class AllAparelhosAdapter extends RecyclerView.Adapter<AllAparelhosAdapter.AparelhoViewHolder> {
 
     public List<Recurso> userList;
+    ApiClient controllerApi;
     private Context context;
     private ProgressDialog mDialog;
     private int recursoId = 0;
-    ApiClient controllerApi;
 
     public AllAparelhosAdapter(List<Recurso> userList, Context context) {
         this.userList = userList;
@@ -66,9 +69,11 @@ public class AllAparelhosAdapter extends RecyclerView.Adapter<AllAparelhosAdapte
     public void onBindViewHolder(final AparelhoViewHolder holder, int position) {
         final Recurso recurso = userList.get(position);
 
-        Bitmap foto = recurso.retornaFotoBmp();
-        if (foto != null)
+
+        if (recurso.getFoto() != null) {
+            Bitmap foto = recurso.retornaFotoBmp();
             holder.foto.setImageBitmap(foto);
+        }
         else
             holder.foto.setImageResource(R.drawable.ic_launcher_background);
 
@@ -114,6 +119,12 @@ public class AllAparelhosAdapter extends RecyclerView.Adapter<AllAparelhosAdapte
         Intent goToUpdate = new Intent(context, AparelhoActivity.class);
         goToUpdate.putExtra("recursoId", Id);
         goToUpdate.putExtra("posicao", pos);
+        Gson gson = new Gson();
+        String json = gson.toJson(userList.get(pos), Recurso.class);
+        SharedPreferences preferences = PreferenceHelper.INSTANCE.defaultPrefs(context);
+        preferences.edit()
+                .putString("aparelho", json)
+                .apply();
         if (context instanceof Activity) {
             ((AparelhosActivity) context).startActivityForResult(goToUpdate, (Id > 0 ? 3 : 2));
         } else {
@@ -172,6 +183,12 @@ public class AllAparelhosAdapter extends RecyclerView.Adapter<AllAparelhosAdapte
 
     }
 
+    public void removeAt(int position) {
+        userList.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, userList.size());
+    }
+
     public static class AparelhoViewHolder extends RecyclerView.ViewHolder {
 
         ImageView foto;
@@ -189,11 +206,5 @@ public class AllAparelhosAdapter extends RecyclerView.Adapter<AllAparelhosAdapte
             potencia = (TextView) itemView.findViewById(R.id.potencia);
         }
 
-    }
-
-    public void removeAt(int position) {
-        userList.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, userList.size());
     }
 }
